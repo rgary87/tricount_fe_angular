@@ -1,0 +1,13 @@
+<!--<div class="content" role="main">-->
+
+  <form [formGroup]="createTripForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label for="days">How long was your trip in days ?</label>
+      <input id="days" type="number" formControlName="days" required="true">
+    </div>
+
+    <button class="btn" type="submit">Create the list of participants!</button>
+
+  </form>
+<!--</div>-->

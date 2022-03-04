@@ -1,0 +1,18 @@
+<h3>Refunds</h3>
+<table>
+  <th>From</th>
+  <th>To</th>
+  <th>Amount</th>
+  <th>Done</th>
+  <th>Idx</th>
+  <th></th>
+  <tr *ngFor="let refund of all_refunds">
+    <td>{{ refund.from }}</td>
+    <td>{{ refund.to }}</td>
+    <td>{{ refund.amount | number: '1.0-2'}}</td>
+    <td>{{ refund.done }}</td>
+    <td>{{ refund.idx }}</td>
+    <td *ngIf="!refund.done" class="center"><button class="btn" (click)="onSubmit(refund.from, refund.to)">Confirm Refund Done</button> </td>
+    <td *ngIf="refund.done" class="center"><button class="btn red" (click)="removeRefund(refund.idx, refund.from, refund.to)">X</button></td>
+  </tr>
+</table>

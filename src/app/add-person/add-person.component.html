@@ -1,0 +1,47 @@
+<!--<div class="content" role="main">-->
+
+
+<div *ngIf="this.appComponent.isInit && this.dataStorageService.getTrip().participant_list !== undefined && this.dataStorageService.getTrip().participant_list.length > 0">
+
+  <p>Total amount payed is {{ this.dataStorageService.getTrip().total_amount }}. </p>
+  <table class="striped">
+    <tr *ngFor="let participant of this.dataStorageService.getTrip().participant_list">
+      <td>
+        {{ participant.name}} stayed for {{participant.day_count}} day<span *ngIf="participant.day_count>1">s</span>
+        <span *ngIf="participant.refund_to.length > 0">
+          <p *ngFor="let refundTo of participant.refund_to" style="margin: 15px 0 0 15px">
+            <span *ngIf="!refundTo.done" class="red">
+              need to refund {{refundTo.amount | number : '1.0-2' }} to {{ refundTo.to}}
+            </span>
+            <span *ngIf="refundTo.done" class="green">
+              has refunded {{refundTo.amount | number : '1.0-2' }} to {{ refundTo.to}}
+            </span>
+          </p>
+        </span>
+      </td>
+      <td>
+        <button class="btn waves-effect waves-light" type="submit" (click)="this.appComponent.removeUser(participant.name)">X</button>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+
+  <h4>Add a participant</h4>
+
+  <form [formGroup]="addPersonForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label for="name">Name</label>
+      <input id="name" type="text" formControlName="name" required="true">
+    </div>
+    <div>
+      <label for="number_of_days">How long this participant was present</label>
+      <input id="number_of_days" type="number" formControlName="number_of_days" required="true">
+    </div>
+
+    <button class="btn" type="submit">Add a participant !</button>
+
+  </form>
+<!--</div>-->

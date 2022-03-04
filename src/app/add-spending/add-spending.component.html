@@ -1,0 +1,72 @@
+<!--<div class="content" role="main">-->
+
+<div>
+  <p>List of spendings:</p>
+  <table class="striped">
+    <th>Amount</th>
+    <th>Paid by</th>
+    <th>For</th>
+    <th>Delete</th>
+    <tr *ngFor="let spending of this.dataStorageService.getTrip().spending_list">
+      <td> {{ spending.amount }} </td>
+      <td> {{ spending.payed_by }}</td>
+      <td><a href="#modalSpending{{spending.idx}}"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></a></td>
+      <td>
+        <button class="btn" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div *ngFor="let spending of this.dataStorageService.getTrip().spending_list" id="modalSpending{{spending.idx}}" class="modal">
+  <div class="modal-content">
+    <table class="striped">
+      <th>Amount</th>
+      <th>Paid by</th>
+      <th>For</th>
+      <th>Delete</th>
+      <tr>
+        <td> {{ spending.amount }} </td>
+        <td> {{ spending.payed_by }}</td>
+        <td><a href="#modalSpending{{spending.idx}}"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></a></td>
+        <td>
+          <button class="btn" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<h4>Add a spending</h4>
+
+
+<form [formGroup]="createSpendingForm" (ngSubmit)="onSubmit()">
+
+  <div>
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" formControlName="amount" required="true">
+  </div>
+
+  <select formControlName="payedBy" style="display: block">
+    <option [ngValue]="null" disabled>Who payed for this?</option>
+    <option *ngFor="let p of dataStorageService.getTrip().participant_list" [ngValue]="p.name">{{p.name}}</option>
+  </select>
+
+  <div>
+    <label for="reason">Reason</label>
+    <input id="reason" type="text" formControlName="reason" required="true">
+  </div>
+
+  <p formGroupName="participants" *ngFor="let p of participantListForm.value | keyvalue">
+    <label>
+      <input type="checkbox" [formControlName]="$any(p.key)" [value]="p.value" />
+      <span>Key: {{p.key}}, Value: {{ p.value }}</span>
+    </label>
+  </p>
+
+
+  <button class="btn" type="submit">Create a new spending</button>
+
+</form>
+<!--</div>-->
