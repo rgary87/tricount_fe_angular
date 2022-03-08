@@ -1,72 +1,93 @@
-<!--<div class="content" role="main">-->
+<!--<div class="content" role="main" style="width: calc((100%/2) - (100%/10)); float: left">-->
+<div class="content flex-box" role="main">
 
-<div>
-  <p>List of spendings:</p>
-  <table class="striped">
-    <th>Amount</th>
-    <th>Paid by</th>
-    <th>For</th>
-    <th>Delete</th>
-    <tr *ngFor="let spending of this.dataStorageService.getTrip().spending_list">
-      <td> {{ spending.amount }} </td>
-      <td> {{ spending.payed_by }}</td>
-      <td><a href="#modalSpending{{spending.idx}}"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></a></td>
-      <td>
-        <button class="btn" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>
-      </td>
-    </tr>
-  </table>
-</div>
+  <div>
+    <h4>Spendings list:</h4>
+    <table mat-table [dataSource]="this.spending_list">
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <td mat-cell *matCellDef="let spending">{{spending.amount | number: '1.0-2'}}</td>
+      </ng-container>
 
-<div *ngFor="let spending of this.dataStorageService.getTrip().spending_list" id="modalSpending{{spending.idx}}" class="modal">
-  <div class="modal-content">
-    <table class="striped">
-      <th>Amount</th>
-      <th>Paid by</th>
-      <th>For</th>
-      <th>Delete</th>
-      <tr>
-        <td> {{ spending.amount }} </td>
-        <td> {{ spending.payed_by }}</td>
-        <td><a href="#modalSpending{{spending.idx}}"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></a></td>
-        <td>
-          <button class="btn" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>
+      <ng-container matColumnDef="paid_by">
+        <th mat-header-cell *matHeaderCellDef>Paid By</th>
+        <td mat-cell *matCellDef="let spending">{{spending.payed_by}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="for">
+        <th mat-header-cell *matHeaderCellDef>For</th>
+        <td mat-cell *matCellDef="let spending"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="remove">
+        <th mat-header-cell *matHeaderCellDef>Remove</th>
+        <td mat-cell *matCellDef="let spending">
+          <button mat-button class="mat-primary" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>
         </td>
-      </tr>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="spendingsColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: spendingsColumns;"></tr>
+
     </table>
   </div>
+
+  <!--  <div *ngFor="let spending of this.dataStorageService.getTrip().spending_list" id="modalSpending{{spending.idx}}" class="modal">-->
+  <!--    <div class="modal-content">-->
+  <!--      <table class="striped">-->
+  <!--        <th>Amount</th>-->
+  <!--        <th>Paid by</th>-->
+  <!--        <th>For</th>-->
+  <!--        <th>Delete</th>-->
+  <!--        <tr>-->
+  <!--          <td> {{ spending.amount }} </td>-->
+  <!--          <td> {{ spending.payed_by }}</td>-->
+  <!--          <td><a href="#modalSpending{{spending.idx}}"><span *ngFor="let shared_with of spending.shared_with">{{ shared_with }}, </span></a></td>-->
+  <!--          <td>-->
+  <!--            <button class="btn" type="submit" (click)="this.appComponent.removeSpending(spending.idx)">X</button>-->
+  <!--          </td>-->
+  <!--        </tr>-->
+  <!--      </table>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+
+  <h4 style="margin-top: 60px">Add a spending</h4>
+
+
+  <form [formGroup]="createSpendingForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Amount</mat-label>
+        <input matInput id="amount" type="number" formControlName="amount" required="true">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Who paid for this?</mat-label>
+        <mat-select [(value)]="payer">
+          <mat-option *ngFor="let formOption of this.participantSelectOptions" [value]="formOption.value">{{formOption.viewValue}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Reason</mat-label>
+        <input matInput id="reason" type="text" formControlName="reason" required="true">
+      </mat-form-field>
+    </div>
+
+    <section [formGroup]="participantListForm">
+      <mat-checkbox formControlName="All"> All Participants </mat-checkbox>
+      <span *ngIf="!this.participantListForm.get('All')?.value">
+        <p *ngFor="let p of this.participant_list"><mat-checkbox formControlName="{{p.name}}"> {{p.name}} </mat-checkbox></p>
+      </span>
+    </section>
+
+    <button mat-raised-button class="mat-primary" type="submit">Create a new spending</button>
+
+  </form>
 </div>
-
-
-<h4>Add a spending</h4>
-
-
-<form [formGroup]="createSpendingForm" (ngSubmit)="onSubmit()">
-
-  <div>
-    <label for="amount">Amount</label>
-    <input id="amount" type="number" formControlName="amount" required="true">
-  </div>
-
-  <select formControlName="payedBy" style="display: block">
-    <option [ngValue]="null" disabled>Who payed for this?</option>
-    <option *ngFor="let p of dataStorageService.getTrip().participant_list" [ngValue]="p.name">{{p.name}}</option>
-  </select>
-
-  <div>
-    <label for="reason">Reason</label>
-    <input id="reason" type="text" formControlName="reason" required="true">
-  </div>
-
-  <p formGroupName="participants" *ngFor="let p of participantListForm.value | keyvalue">
-    <label>
-      <input type="checkbox" [formControlName]="$any(p.key)" [value]="p.value" />
-      <span>Key: {{p.key}}, Value: {{ p.value }}</span>
-    </label>
-  </p>
-
-
-  <button class="btn" type="submit">Create a new spending</button>
-
-</form>
-<!--</div>-->

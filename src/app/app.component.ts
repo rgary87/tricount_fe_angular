@@ -10,22 +10,21 @@ import {DataStorageService} from "./services/data-storage.service";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnChanges {
-  get entireTrip(): TripService {
-    let trip = this.dataStorageService.getTrip();
-    // console.log("Is init: " + trip.isInit);
-    this.isInit = trip.isInit;
-    return trip;
-  }
 
-  private _entireTrip: TripService;
+  public trip: TripService = new TripService();
+  // private _entireTrip: TripService;
   title = 'tricount';
   display_base_page = true;
   public isInit: boolean = false;
 
   constructor(private http: HttpClient,
               private dataStorageService: DataStorageService) {
-    this._entireTrip = dataStorageService.getTrip();
-    this.isInit = this._entireTrip.isInit;
+    this.dataStorageService.tripBehaviorSubject.subscribe( value => {
+      console.log("Trip refreshed in app-component with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_participants, value.number_of_refunds_on_participants);
+      this.trip = value;
+      this.isInit = this.trip.isInit;
+    });
+    this.dataStorageService.refresh();
   }
 
   mustDisplayAll() {
@@ -35,8 +34,8 @@ export class AppComponent implements OnInit, OnChanges {
 
   onSubmitForCalculation(): void {
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", JSON.stringify(this.dataStorageService.getTrip()), {headers: headers}).subscribe(data => {
-      // data.participant_list.sort((a, b) => b.total_spent - a.total_spent);
+    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
+      console.log("Called for calculation. Got %o", data);
       this.dataStorageService.setTrip(data);
     })
   }
@@ -64,6 +63,6 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
   print_data(): void {
-    console.log("Data: %o", this.dataStorageService.getTrip());
+    console.log("Data: %o", this.trip);
   }
 }

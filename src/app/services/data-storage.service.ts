@@ -4,6 +4,7 @@ import {PersonService} from "./person.service";
 import {TripService} from "./trip.service";
 import {SpendingService} from "./spending.service";
 import {RefundService} from "./refund.service";
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,14 @@ export class DataStorageService {
   private trip_info_key: string = "TRIP_INFO";
   private updated: boolean = true;
 
+  public tripBehaviorSubject: BehaviorSubject<TripService> = new BehaviorSubject<TripService>(new TripService());
+  private trip: TripService = this.getTrip();
+
   public static BACKEND_URL:string ;
 
   constructor(private localStorage: LocalStorageService,
-              private trip: TripService) {
-    this.trip = this.getTrip();
+              ) {
+    this.tripBehaviorSubject.next(this.getTrip());
     if (window.location.href.indexOf("localhost") === -1 && window.location.href.indexOf("127.0.0.1") === -1) {
       DataStorageService.BACKEND_URL = 'http://serversuccu.serveftp.com:3000';
     } else {
@@ -34,7 +38,7 @@ export class DataStorageService {
     return [];
   }
 
-  getTrip(): TripService {
+  private getTrip(): TripService {
     if (!this.updated) {
       return this.trip;
     }
@@ -53,34 +57,44 @@ export class DataStorageService {
   }
 
   setTrip(trip: TripService): void {
+    trip.number_of_spendings = trip.spending_list.length;
+    trip.number_of_participants = trip.participant_list.length;
+    trip.number_of_refunds = trip.participant_list.length;
+
+    let number_of_refunds_on_participants = 0;
+    trip.participant_list.forEach(p => number_of_refunds_on_participants += p.refund_to.length);
+    trip.number_of_refunds_on_participants = number_of_refunds_on_participants;
+
     this.localStorage.set(this.trip_info_key, JSON.stringify(trip));
-    console.log(this.localStorage.get(this.trip_info_key));
+    console.log("Stored value: %o", trip);
+    this.tripBehaviorSubject.next(trip);
     this.updated = true;
   }
 
   addParticipant(person: PersonService): void {
     let trip = this.getTrip();
-    console.log("Add participant: "+this.localStorage.get(this.trip_info_key));
+    console.log("Store participant");
     trip.participant_list.push(person);
     this.setTrip(trip);
   }
 
   addSpending(spending: SpendingService): void {
     let trip = this.getTrip();
-    console.log("Add spending: "+this.localStorage.get(this.trip_info_key));
+    console.log("Store spending");
     trip.spending_list.push(spending);
     this.setTrip(trip);
   }
 
   addRefund(refund: RefundService): void {
     let trip = this.getTrip();
-    console.log("Add refund: "+this.localStorage.get(this.trip_info_key));
+    console.log("Store refund");
     trip.refund_list.push(refund);
     this.setTrip(trip);
   }
 
   removeParticipant(name: string): void {
     let trip = this.getTrip();
+    console.log("Remove participant %o", name);
     let filtered = trip.participant_list.filter(function (v, i, a) {
       return v.name !== name;
     });
@@ -90,6 +104,7 @@ export class DataStorageService {
 
   removeSpending(idx: number): void {
     let trip = this.getTrip();
+    console.log("Remove spending %o", idx);
     trip.spending_list = trip.spending_list.filter(s => s.idx !== idx);
     this.setTrip(trip);
   }
@@ -106,4 +121,7 @@ export class DataStorageService {
     this.setTrip(new TripService());
   }
 
+  refresh():void {
+    this.tripBehaviorSubject.next(this.trip);
+  }
 }

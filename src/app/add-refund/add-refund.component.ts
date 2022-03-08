@@ -13,6 +13,8 @@ import {RefundService} from "../services/refund.service";
 })
 export class AddRefundComponent implements OnInit {
 
+  public trip: TripService = new TripService();
+
   createRefundForm: FormGroup;
 
   _all_refunds: RefundService[] = [];
@@ -28,18 +30,23 @@ export class AddRefundComponent implements OnInit {
     private appComponent: AppComponent,
     public dataStorageService: DataStorageService
   ) {
-    dataStorageService.getTrip().participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
+    this.dataStorageService.tripBehaviorSubject.subscribe( value => {
+      this.trip = value;
+      console.log("Trip refreshed in add-refund    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_participants, value.number_of_refunds_on_participants);
+      this.refreshRefunds();
+    });
+    this.trip.participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
     this.createRefundForm = this.formBuilder.group({})
   }
 
   refreshRefunds() {
     this._all_refunds = [];
-    this.dataStorageService.getTrip().participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
+    this.trip.participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
     this.createRefundForm = this.formBuilder.group({})
   }
 
   onSubmit(from: string, to: string): void {
-    let participant = this.dataStorageService.getTrip().participant_list.filter(p => p.name === from);
+    let participant = this.trip.participant_list.filter(p => p.name === from);
     if (participant.length !== 1) {
       throw "what are you trying to do here ?...";
     }
@@ -50,7 +57,7 @@ export class AddRefundComponent implements OnInit {
     }
 
     let maxIdx = 0;
-    this.dataStorageService.getTrip().refund_list.forEach(r => {
+    this.trip.refund_list.forEach(r => {
       if (r.idx >= maxIdx) {
         maxIdx = r.idx + 1;
       }
@@ -60,7 +67,7 @@ export class AddRefundComponent implements OnInit {
     this.dataStorageService.addRefund(refundTo[0]);
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/addRefund", JSON.stringify(this.dataStorageService.getTrip()), {headers: headers}).subscribe(data => {
+    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/addRefund", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
       this.dataStorageService.setTrip(data);
       console.log("AddRefund response: %o", data);
       this.refreshRefunds();
@@ -68,7 +75,7 @@ export class AddRefundComponent implements OnInit {
   }
 
   removeRefund(idx: number, from: string, to: string): void {
-    let trip = this.dataStorageService.getTrip();
+    let trip = this.trip;
     let filtered = trip.refund_list.filter(r => r.idx !== idx);
     for (const participant of trip.participant_list) {
       if (participant.name === from) {

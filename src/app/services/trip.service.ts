@@ -20,4 +20,8 @@ export class TripService {
   refund_list: RefundService[] = [];
   participant_list: PersonService[] = [];
   isInit: boolean = false;
+  number_of_spendings: number = 0;
+  number_of_refunds: number = 0;
+  number_of_participants: number = 0;
+  number_of_refunds_on_participants: number = 0;
 }
