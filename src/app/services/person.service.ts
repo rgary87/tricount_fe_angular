@@ -11,6 +11,7 @@ export class PersonService {
   day_count: number = 0;
   owe_amount: number = 0;
   refund_to: RefundService[] = [];
-  constructor() {}
+  constructor() {
+  }
 
 }

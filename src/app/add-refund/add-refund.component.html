@@ -1,18 +1,54 @@
-<h3>Refunds</h3>
-<table>
-  <th>From</th>
-  <th>To</th>
-  <th>Amount</th>
-  <th>Done</th>
-  <th>Idx</th>
-  <th></th>
-  <tr *ngFor="let refund of all_refunds">
-    <td>{{ refund.from }}</td>
-    <td>{{ refund.to }}</td>
-    <td>{{ refund.amount | number: '1.0-2'}}</td>
-    <td>{{ refund.done }}</td>
-    <td>{{ refund.idx }}</td>
-    <td *ngIf="!refund.done" class="center"><button class="btn" (click)="onSubmit(refund.from, refund.to)">Confirm Refund Done</button> </td>
-    <td *ngIf="refund.done" class="center"><button class="btn red" (click)="removeRefund(refund.idx, refund.from, refund.to)">X</button></td>
-  </tr>
-</table>
+<div class="content flex-box" role="main">
+
+  <h4>Refunds</h4>
+  <table mat-table [dataSource]="all_refunds">
+    <ng-container matColumnDef="from">
+      <th mat-header-cell *matHeaderCellDef>From</th>
+      <td mat-cell *matCellDef="let refund">{{refund.from }}</td>
+    </ng-container>
+    <ng-container matColumnDef="to">
+      <th mat-header-cell *matHeaderCellDef>To</th>
+      <td mat-cell *matCellDef="let refund">{{refund.to }}</td>
+    </ng-container>
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef>Amount</th>
+      <td mat-cell *matCellDef="let refund">{{refund.amount | euro}}</td>
+    </ng-container>
+    <ng-container matColumnDef="done">
+      <th mat-header-cell *matHeaderCellDef>Done</th>
+      <td mat-cell *matCellDef="let refund">{{refund.done }}</td>
+    </ng-container>
+    <ng-container matColumnDef="idx">
+      <th mat-header-cell *matHeaderCellDef>Idx</th>
+      <td mat-cell *matCellDef="let refund">{{refund.idx | euro}}</td>
+    </ng-container>
+    <ng-container matColumnDef="update">
+      <th mat-header-cell *matHeaderCellDef>Update</th>
+      <mat-cell *matCellDef="let refund">
+        <td *ngIf="!refund.done" class="center">
+          <button mat-raised-button class="mat-primary" (click)="updateRefund(refund.idx, true)"><mat-icon>check_box</mat-icon></button>
+        </td>
+        <td *ngIf="refund.done" class="center">
+          <button mat-raised-button class="mat-primary" (click)="updateRefund(refund.idx, false)"><mat-icon>clear</mat-icon></button>
+        </td>
+      </mat-cell>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="refundsColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: refundsColumns;"></tr>
+
+    <!--  <th>From</th>-->
+    <!--  <th>To</th>-->
+    <!--  <th>Amount</th>-->
+    <!--  <th>Done</th>-->
+    <!--  <th>Idx</th>-->
+    <!--  <th></th>-->
+    <!--  <tr *ngFor="let refund of all_refunds">-->
+    <!--    <td>{{ refund.from }}</td>-->
+    <!--    <td>{{ refund.to }}</td>-->
+    <!--    <td>{{ refund.amount | euro}}</td>-->
+    <!--    <td>{{ refund.done }}</td>-->
+    <!--    <td>{{ refund.idx }}</td>-->
+    <!--  </tr>-->
+  </table>
+</div>

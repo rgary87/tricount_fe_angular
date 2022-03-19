@@ -3,14 +3,31 @@
     <div *ngIf="this.trip.participant_list.length > 0">
 
       <h4>Participants list </h4>
-      <table mat-table [dataSource]="this.trip.participant_list" >
+      <table mat-table [dataSource]="this.trip.participant_list" class="mat-elevation-z1">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
-          <td mat-cell *matCellDef="let participant">{{participant.name}}</td>
+          <th mat-header-cell *matHeaderCellDef >Name</th>
+          <td mat-cell *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.name}}</td>
+          <td mat-footer-cell *matFooterCellDef> <b> Total </b> </td>
         </ng-container>
-        <ng-container matColumnDef="stayed">
-          <th mat-header-cell *matHeaderCellDef>Stayed</th>
-          <td mat-cell *matCellDef="let participant">{{participant.day_count}}/{{this.trip.default_number_of_days}}</td>
+        <ng-container matColumnDef="stayed"  >
+          <th mat-header-cell [hidden]="mainPage.app.mobile" *matHeaderCellDef>Stayed</th>
+          <td mat-cell [hidden]="mainPage.app.mobile" *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.day_count}}/{{this.trip.default_number_of_days}}</td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <ng-container matColumnDef="owe">
+          <th mat-header-cell *matHeaderCellDef>Owe</th>
+          <td mat-cell *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.owe_amount | euro}}</td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <ng-container matColumnDef="payed">
+          <th mat-header-cell *matHeaderCellDef>Payed</th>
+          <td mat-cell *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.payed_amount | euro}}</td>
+          <td mat-footer-cell *matFooterCellDef> <b>{{this.getTotalCost()}} €</b> </td>
+        </ng-container>
+        <ng-container matColumnDef="spent">
+          <th mat-header-cell [hidden]="mainPage.app.mobile" *matHeaderCellDef>Spent</th>
+          <td mat-cell [hidden]="mainPage.app.mobile" *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.total_spent | euro}}</td>
+          <td mat-footer-cell *matFooterCellDef></td>
         </ng-container>
 
         <ng-container matColumnDef="refunds">
@@ -20,46 +37,43 @@
             <table mat-table [dataSource]="participant.refund_to" *ngIf="participant.refund_to.length > 0">
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef>Amount</th>
-                <td mat-cell *matCellDef="let refund">{{refund.amount | number: '1.0-2'}}</td>
+                <td mat-cell *matCellDef="let refund">{{refund.amount | euro}}</td>
               </ng-container>
               <ng-container matColumnDef="refunds_to">
                 <th mat-header-cell *matHeaderCellDef>To</th>
                 <td mat-cell *matCellDef="let refund">{{refund.to}}</td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="participantRefundsColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: participantRefundsColumns;"></tr>
+              <tr mat-row *matRowDef="let row; columns: participantRefundsColumns;"  (click)="this.refundComponent.openRefundDialog(row.idx)"></tr>
             </table>
             <i *ngIf="participant.refund_to.length < 1" style="font-size: 8pt"> All clear, wait for refunds ... </i>
           </td>
-        </ng-container>
-
-        <ng-container matColumnDef="remove">
-          <th mat-header-cell *matHeaderCellDef>Remove</th>
-          <td mat-cell *matCellDef="let participant">
-            <button class="mat-primary" mat-button type="submit" (click)="this.removeUser(participant.name)">X</button>
-          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="participantsColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: participantsColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: participantsColumns;" ></tr>
+        <tr mat-footer-row *matFooterRowDef="participantsColumns"></tr>
       </table>
     </div>
 
 
     <h4  style="margin-top: 60px">Add a participant</h4>
 
-    <form [formGroup]="addPersonForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="addPersonForm" (ngSubmit)="onSubmit()" >
 
       <p>
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
-          <input matInput id="name" type="text" formControlName="name" required="true">
+          <input matInput id="name" type="text" [formControl]="nameControl" >
+          <mat-error *ngIf="nameControl.invalid">{{checkParticipantNameError()}}</mat-error>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field appearance="fill">
-          <mat-label>How long this participant was present</mat-label>
-          <input matInput id="number_of_days" type="number" formControlName="number_of_days" required="true">
+          <mat-label>How long was this participant present</mat-label>
+          <input matInput id="number_of_days" type="number" [formControl]="dayCountControl" >
+          <mat-error *ngIf="dayCountControl.invalid">{{checkParticipantDayCountError()}}</mat-error>
         </mat-form-field>
       </p>
 

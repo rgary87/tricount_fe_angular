@@ -1,0 +1,18 @@
+<!--<div class="content" role="main" style="width: calc((100%/2) - (100%/10)); float: left">-->
+<h4>Update a participant</h4>
+
+<mat-form-field appearance="fill">
+<mat-label>Name</mat-label>
+<input matInput type="text" [formControl]="modifiedNameControl">
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>How long was this participant present</mat-label>
+  <input matInput type="text" [formControl]="modifiedDayCountControl">
+</mat-form-field>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close="false" class="mat-warn" (click)="deleteParticipant()">Delete</button>
+  <button mat-raised-button mat-dialog-close="false">Cancel</button>
+  <button mat-raised-button class="mat-accent" mat-dialog-close="true" (click)="updateParticipant()">Update</button>
+</mat-dialog-actions>

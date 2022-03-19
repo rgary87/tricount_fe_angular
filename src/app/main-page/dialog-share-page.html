@@ -1,0 +1,11 @@
+<h4>Share me!</h4>
+
+<mat-form-field style="width: 250px" appearance="fill" >
+  <mat-label>Link</mat-label>
+  <input matInput value="{{this.url}}{{this.uuid}}" #linkField>
+</mat-form-field>
+
+<!--<mat-form-field  appearance="fill">-->
+<!--  <input matInput disabled value="{{this.url}}{{this.uuid}}">-->
+<button mat-raised-button class="mat-background-warn" (click)="linkField.select(); copyLink() " >copy</button>
+<!--</mat-form-field>-->

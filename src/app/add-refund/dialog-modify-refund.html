@@ -1,0 +1,8 @@
+<h4>Refund</h4>
+
+<p>Do you, <b>{{refund.from}}</b>, really want to refund <b><i>{{refund.amount | euro : true  }}</i></b> to <b>{{refund.to}}</b> ? </p>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close="false">Cancel</button>
+  <button mat-raised-button class="mat-accent" mat-dialog-close="true" (click)="confirmRefund()">Confirm</button>
+</mat-dialog-actions>

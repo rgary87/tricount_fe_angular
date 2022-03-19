@@ -1,10 +1,14 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {AppComponent} from "../app.component";
 import {DataStorageService} from "../services/data-storage.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TripService} from "../services/trip.service";
 import {RefundService} from "../services/refund.service";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MainPageComponent} from "../main-page/main-page.component";
+
+const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
 
 @Component({
   selector: 'app-add-refund',
@@ -15,9 +19,8 @@ export class AddRefundComponent implements OnInit {
 
   public trip: TripService = new TripService();
 
-  createRefundForm: FormGroup;
-
   _all_refunds: RefundService[] = [];
+  refundsColumns: string[] = ['from', 'to', 'amount', 'done', 'idx', 'update'];
 
   get all_refunds(): RefundService[] {
     this.refreshRefunds();
@@ -27,70 +30,88 @@ export class AddRefundComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
-    private appComponent: AppComponent,
+    public dialog: MatDialog,
+    private mainPage: MainPageComponent,
     public dataStorageService: DataStorageService
   ) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
       this.trip = value;
-      console.log("Trip refreshed in add-refund    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_participants, value.number_of_refunds_on_participants);
+      console.log("Trip refreshed in add-refund    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.refreshRefunds();
     });
-    this.trip.participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
-    this.createRefundForm = this.formBuilder.group({})
   }
 
   refreshRefunds() {
     this._all_refunds = [];
     this.trip.participant_list.forEach(p => p.refund_to.forEach(r => this._all_refunds.push(r)));
-    this.createRefundForm = this.formBuilder.group({})
   }
 
-  onSubmit(from: string, to: string): void {
-    let participant = this.trip.participant_list.filter(p => p.name === from);
-    if (participant.length !== 1) {
-      throw "what are you trying to do here ?...";
-    }
-
-    let refundTo = participant[0].refund_to.filter(r => r.to === to);
-    if (refundTo.length !== 1) {
-      throw "what are you trying to do here ?...";
-    }
-
-    let maxIdx = 0;
-    this.trip.refund_list.forEach(r => {
-      if (r.idx >= maxIdx) {
-        maxIdx = r.idx + 1;
-      }
-    });
-    refundTo[0].idx = maxIdx;
-
-    this.dataStorageService.addRefund(refundTo[0]);
-
-    const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/addRefund", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
-      this.dataStorageService.setTrip(data);
-      console.log("AddRefund response: %o", data);
-      this.refreshRefunds();
-    });
-  }
-
-  removeRefund(idx: number, from: string, to: string): void {
-    let trip = this.trip;
-    let filtered = trip.refund_list.filter(r => r.idx !== idx);
-    for (const participant of trip.participant_list) {
-      if (participant.name === from) {
-        for (const refund of participant.refund_to) {
-          if (refund.to === to) {
-            refund.done = false;
-          }
+  updateRefund(idx: number, done: boolean): void {
+    let found = false;
+    for (const participant of this.trip.participant_list) {
+      for (const refundService of participant.refund_to) {
+        if (refundService.idx === idx) {
+          refundService.done = done;
+          found = true;
         }
       }
     }
-    trip.refund_list = filtered;
-    this.dataStorageService.setTrip(trip);
+    if (!found) {
+      throw "what are you trying to do here ?...";
+    }
+    this.refreshRefunds();
+
+    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
+      console.log("Called for calculation. Got %o", data);
+      this.dataStorageService.setTrip(data);
+    })
   }
 
   ngOnInit(): void {
+  }
+
+  openRefundDialog(idx: number) {
+    for (const participant of this.trip.participant_list) {
+      for (const refundService of participant.refund_to) {
+        if (refundService.idx === idx) {
+          const dialogRef = this.dialog.open(DialogModifyRefund, {data: {refund: refundService, trip: this.trip}});
+          dialogRef.afterClosed().subscribe(r => {this.mainPage.onSubmitForCalculation()});
+          return;
+        }
+      }
+    }
+  }
+
+}
+
+interface RefundDialogData {
+  refund: RefundService,
+  trip: TripService
+}
+
+@Component({
+  selector: 'dialog-modify-refund',
+  templateUrl: './dialog-modify-refund.html'
+})
+export class DialogModifyRefund {
+  public trip: TripService;
+  public refund: RefundService;
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogModifyRefund>,
+    public dataStorageService: DataStorageService,
+    public formBuilder : FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: RefundDialogData,
+  ) {
+    this.refund = data.refund;
+    this.trip = data.trip;
+
+  }
+
+
+
+  confirmRefund() {
+    console.log("CONFIRMED REFUND #%o", this.refund.idx);
   }
 
 }

@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {HttpClientModule} from "@angular/common/http";
-import { AppComponent } from './app.component';
-import { AddPersonComponent } from './add-person/add-person.component';
+import {AppComponent} from './app.component';
+import {AddPersonComponent, DialogModifyPerson} from './add-person/add-person.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { CreateTripComponent } from './create-trip/create-trip.component';
 import {AddSpendingComponent, DialogModifySpending} from './add-spending/add-spending.component';
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AddRefundComponent } from './add-refund/add-refund.component';
+import {AddRefundComponent, DialogModifyRefund} from './add-refund/add-refund.component';
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
@@ -18,6 +18,13 @@ import {MatTableModule} from "@angular/material/table";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatSelectModule} from "@angular/material/select";
+import {MatDialog, MatDialogModule} from "@angular/material/dialog";
+import {MatSortModule} from "@angular/material/sort";
+import {EuroPipe} from "./pipe/EuroPipe";
+import {RouterModule, Routes} from "@angular/router";
+import { UuidComponent } from './uuid/uuid.component';
+import {MainPageComponent, DialogSharePage} from './main-page/main-page.component';
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -26,7 +33,13 @@ import {MatSelectModule} from "@angular/material/select";
     CreateTripComponent,
     AddSpendingComponent,
     AddRefundComponent,
-    DialogModifySpending
+    UuidComponent,
+    DialogModifySpending,
+    DialogModifyPerson,
+    DialogModifyRefund,
+    DialogSharePage,
+    EuroPipe,
+    MainPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,9 +55,24 @@ import {MatSelectModule} from "@angular/material/select";
     MatTableModule,
     MatGridListModule,
     MatToolbarModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDialogModule,
+    MatSortModule,
+    RouterModule.forRoot([
+        {path: ':uuid', component: UuidComponent},
+        // { path: ':uuid', component: UuidComponent, redirectTo: '' },
+        {path: '', component: MainPageComponent, pathMatch: 'full'},
+      ]
+      // , {enableTracing: true}
+    ),
+    MatIconModule
   ],
-  providers: [AppComponent],
+  exports: [RouterModule],
+  providers: [AppComponent, AddRefundComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
+
+export const MyRoutes: Routes = [
+  {  }
+]

@@ -1,8 +1,9 @@
-import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, HostListener, Inject, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {TripService} from "./services/trip.service";
+import {TripService, TripToJSON} from "./services/trip.service";
 import {DataStorageService} from "./services/data-storage.service";
-
+import {MAT_DIALOG_DATA, MatDialog} from "@angular/material/dialog";
+import { fromEvent, Observable, Subscription } from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -11,44 +12,20 @@ import {DataStorageService} from "./services/data-storage.service";
 })
 export class AppComponent implements OnInit, OnChanges {
 
-  public trip: TripService = new TripService();
-  // private _entireTrip: TripService;
-  title = 'tricount';
-  display_base_page = true;
-  public isInit: boolean = false;
+  mobile:boolean = false;
 
-  constructor(private http: HttpClient,
-              private dataStorageService: DataStorageService) {
-    this.dataStorageService.tripBehaviorSubject.subscribe( value => {
-      console.log("Trip refreshed in app-component with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_participants, value.number_of_refunds_on_participants);
-      this.trip = value;
-      this.isInit = this.trip.isInit;
-    });
-    this.dataStorageService.refresh();
+  @HostListener('window:resize', ['$event'])
+  onResize(event:any) {
+    this.mobile = event.target.innerWidth < 500;
   }
 
-  mustDisplayAll() {
-    return false;
-    // return this.display_base_page;
-  }
-
-  onSubmitForCalculation(): void {
-    const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
-      console.log("Called for calculation. Got %o", data);
-      this.dataStorageService.setTrip(data);
-    })
+  isMobile(): void {
+    this.mobile = window.innerWidth < 500;
   }
 
   ngOnInit(): void {
-  }
-
-  removeUser(name: string) {
-    this.dataStorageService.removeParticipant(name);
-  }
-
-  removeSpending(idx:number) {
-    this.dataStorageService.removeSpending(idx);
+    this.isMobile();
+    console.log("initialized...");
   }
 
   ngOnChanges(changes:SimpleChanges) {
@@ -56,13 +33,4 @@ export class AppComponent implements OnInit, OnChanges {
   }
 
 
-  reset(): void{
-    this.dataStorageService.reset();
-    this.isInit = false;
-    location.reload();
-  }
-
-  print_data(): void {
-    console.log("Data: %o", this.trip);
-  }
 }

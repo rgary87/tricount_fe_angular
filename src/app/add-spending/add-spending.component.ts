@@ -1,22 +1,21 @@
 import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {AppComponent} from "../app.component";
 import {DataStorageService} from "../services/data-storage.service";
 import {PersonService} from "../services/person.service";
 import {SpendingService} from "../services/spending.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {TripService} from "../services/trip.service";
+import {MainPageComponent} from "../main-page/main-page.component";
 
 interface FormOption {
   value: string;
   viewValue: string;
 }
 
-export interface DialogData {
-  amount: number;
-  payed_by: string;
-  shared_with: [];
-  idx: number;
+interface DialogData {
+  spending: SpendingService,
+  trip: TripService
 }
 
 @Component({
@@ -35,10 +34,12 @@ export class AddSpendingComponent implements OnInit {
   createSpendingForm: FormGroup = this.formBuilder.group({});
   private _participantListForm: FormGroup = this.formBuilder.group({});
 
-  public spendingsColumns: string[] = ['amount', 'paid_by', 'for', 'remove'];
+  public spendingsColumns: string[] = ['amount', 'paid_by', 'reason', 'for'];
   private _participantSelectOptions: FormOption[] = [];
   public payer: string = '';
   public amount: number = 0;
+  public amountControl: FormControl;
+  public payerControl: FormControl;
 
   get participantListForm(): FormGroup {
     this.refreshParticipants();
@@ -52,23 +53,22 @@ export class AddSpendingComponent implements OnInit {
   constructor (
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    public appComponent: AppComponent,
-    public dataStorageService: DataStorageService
+    public mainPage: MainPageComponent,
+    public dataStorageService: DataStorageService,
+    public dialog: MatDialog,
   ) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
-      console.log("Trip refreshed in add-spending  with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_participants, value.number_of_refunds_on_participants);
-      console.log("Number of spendings before : %o", this.trip.number_of_spendings);
-      // this.trip = JSON.parse(JSON.stringify(value));
+      console.log("Trip refreshed in add-spending  with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.trip = value;
-      console.log("Number of spendings after : %o", this.trip.number_of_spendings);
-      this.spending_list = this.trip.spending_list;
+      this.spending_list = this.trip.spending_list.sort(((a, b) => a.payed_by.localeCompare(b.payed_by) ));
       this.participant_list = this.trip.participant_list;
       this.refreshSelect();
       this.refreshParticipants();
       this.updated = !this.updated;
-      console.log("updated du cul: %o", this.updated);
     });
-    console.log("updated value: %o", this.updated);
+    this.amountControl = new FormControl('', [Validators.required, Validators.min(1)]);
+    this.amountControl.setValue(1);
+    this.payerControl = new FormControl('', [Validators.required]);
     this.refreshParticipants();
     this.refreshSelect();
   }
@@ -97,6 +97,9 @@ export class AddSpendingComponent implements OnInit {
     let sharedWith = [];
 
     let sharedToAll = group.get('All')?.value;
+    if (sharedToAll) {
+
+    }
     for (let p of this.participant_list) {
       let shared = group.get(p.name);
       if (sharedToAll || shared?.value) {
@@ -110,27 +113,79 @@ export class AddSpendingComponent implements OnInit {
         maxIndex = s.idx + 1;
       }});
 
-    let final_object_to_use_later_on_in_app = new SpendingService();
-    final_object_to_use_later_on_in_app.amount = this.createSpendingForm.value['amount'];
-    final_object_to_use_later_on_in_app.payed_by = this.payer;
-    final_object_to_use_later_on_in_app.shared_with = sharedWith;
-    final_object_to_use_later_on_in_app.idx = maxIndex;
+    let spending = new SpendingService();
+    spending.amount = this.amountControl.value;
+    spending.payed_by = this.payer;
+    spending.reason = this.createSpendingForm.get('reason')?.value;
+    spending.shared_with = sharedWith;
+    spending.idx = maxIndex;
 
-    console.log(final_object_to_use_later_on_in_app);
+    console.log(spending);
 
-    this.dataStorageService.addSpending(final_object_to_use_later_on_in_app);
+    this.dataStorageService.addSpending(spending);
 
     this.createForm();
-    this.appComponent.onSubmitForCalculation();
+    this.mainPage.onSubmitForCalculation();
 
   }
 
   createForm() {
     this.createSpendingForm = this.formBuilder.group({
       participants: this.formBuilder.group({}),
-      amount: 0,
       reason: 'Carrots and grapes'
     })
+  }
+
+  checkForAmountError():string {
+    if (this.amountControl.hasError('required')) {
+      return 'You must enter an amount';
+    }
+    if (this.amountControl.hasError('min')) {
+      return 'An amount should be at least 1';
+    }
+    return '';
+  }
+
+  checkForPayerError():string {
+    if (this.payerControl.hasError('required')) {
+      return 'You must select a payer';
+    }
+    return '';
+  }
+
+  sharedWithPrintList(sharedWith: string[]): string {
+    if (sharedWith.length === this.trip.participant_list.length) {
+      return 'All';
+    }
+    let str;
+    if (sharedWith.length > this.trip.participant_list.length / 2) {
+      str = 'Not for: ';
+      let first = true;
+      for (const participant of this.trip.participant_list) {
+        if (sharedWith.indexOf(participant.name) === -1) {
+          if (!first) {
+            str += ', ';
+          }
+          str += participant.name;
+          first = false;
+        }
+      }
+    } else {
+      str = 'For: ';
+      for (let i = 0; i < sharedWith.length; i++) {
+        str += sharedWith[i];
+        if (i !== sharedWith.length - 1) {
+          str += ', ';
+        }
+      }
+    }
+    return str;
+  }
+
+  openSpendingModifDialog(spendingIdx: number): void {
+    let spending = this.trip.spending_list.find(s => s.idx === spendingIdx);
+    let dialogRef = this.dialog.open(DialogModifySpending, {data: {spending: spending, trip: this.trip}});
+    dialogRef.afterClosed().subscribe(r => {this.mainPage.onSubmitForCalculation()})
   }
 
   ngOnInit(): void {
@@ -142,14 +197,65 @@ export class AddSpendingComponent implements OnInit {
   templateUrl: './dialog-modify-spending.html'
 })
 export class DialogModifySpending {
+
+  public participantGroup: FormGroup;
+
+  public modifiedAmountControl: FormControl;
+  public modifiedPayerControl: FormControl;
+  public modifiedReasonControl: FormControl;
+  public participantSelectOptions: FormOption[] = [];
+  public spending: SpendingService;
+  public trip: TripService;
+
   constructor(
     public dialogRef: MatDialogRef<DialogModifySpending>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    public dataStorageService: DataStorageService,
+    public formBuilder : FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
+    this.spending = data.spending;
+    this.trip = data.trip;
+    this.participantGroup = formBuilder.group({});
+    this.trip.participant_list.forEach((p: PersonService) => {
+      this.participantGroup.addControl(p.name, new FormControl(this.spending.shared_with.indexOf(p.name) !== -1))
+    });
+    this.participantGroup.addControl('All', new FormControl(this.spending.shared_with.length === this.trip.participant_list.length));
+    this.modifiedAmountControl = new FormControl('', [Validators.required]);
+    this.modifiedAmountControl.setValue(this.spending.amount);
+    this.modifiedPayerControl = new FormControl('', [Validators.required]);
+    this.modifiedPayerControl.setValue(this.spending.payed_by);
+    this.modifiedReasonControl = new FormControl('');
+    this.modifiedReasonControl.setValue(this.spending.reason);
+    this.refreshSelect();
   }
 
-  onNoClick(): void {
+  refreshSelect() {
+    this.participantSelectOptions = []
+    for (const participant of this.trip.participant_list) {
+      this.participantSelectOptions.push({value: participant.name, viewValue:participant.name})
+    }
+  }
+
+  updateSpending(): void {
+    this.spending.amount = this.modifiedAmountControl.value;
+    this.spending.payed_by = this.modifiedPayerControl.value;
+    this.spending.reason = this.modifiedReasonControl.value;
+    this.spending.shared_with = [];
+    let sharedToAll = this.participantGroup.get('All')?.value;
+    for (let p of this.trip.participant_list) {
+      let shared = this.participantGroup.get(p.name);
+      if (sharedToAll || shared?.value) {
+        this.spending.shared_with.push(p.name);
+      }
+      console.log("Participant " + p.name + (shared?.value ? " do " : " doesn't ") + "share this spending");
+    }
     this.dialogRef.close();
   }
+
+  deleteSpending(): void {
+    this.dataStorageService.removeSpending(this.spending.idx);
+    this.dialogRef.close();
+  }
+
 
 }
