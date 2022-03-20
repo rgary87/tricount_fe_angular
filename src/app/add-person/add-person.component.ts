@@ -47,7 +47,7 @@ export class AddPersonComponent implements OnInit {
     this.nameControl.setValue('Poupi');
     this.participantsColumns = ['name', 'stayed', 'owe', 'payed', 'spent'];
     this.dataStorageService.tripBehaviorSubject.subscribe(value => {
-      console.log("Trip refreshed in add-person    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
+      // console.log("Trip refreshed in add-person    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.trip = value;
       this.createParticipantForm();
       this.dayCountControl = new FormControl('', [Validators.required, Validators.min(1), Validators.max(this.trip.default_number_of_days)])

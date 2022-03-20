@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {DataStorageService} from "../services/data-storage.service";
+import {DataAccessService} from "../services/data-access.service";
 
 @Component({
   selector: 'app-uuid',
@@ -11,7 +11,7 @@ export class UuidComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private data: DataStorageService) {
+              private access: DataAccessService) {
   }
 
   ngOnInit(): void {
@@ -29,7 +29,8 @@ export class UuidComponent implements OnInit {
     })
     const uuid = String(this.route.snapshot.paramMap.get('uuid'));
     console.log("Snapshot: %o", uuid);
-    this.data.retrieveTripFromServer(uuid);
+    DataAccessService.UUID = uuid;
+    this.access.retrieveTripFromServer();
     this.router.navigate(['']);
   }
 

@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DataStorageService} from "../services/data-storage.service";
 import {MAT_DIALOG_DATA, MatDialog} from "@angular/material/dialog";
 import {AppComponent} from "../app.component";
+import {DataAccessService} from "../services/data-access.service";
 
 @Component({
   selector: 'app-main-page',
@@ -20,10 +21,11 @@ export class MainPageComponent implements OnInit {
 
   constructor(private http: HttpClient,
               private dataStorageService: DataStorageService,
+              private access: DataAccessService,
               public app: AppComponent,
               public dialog: MatDialog) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
-      console.log("Trip refreshed in main-component with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
+      // console.log("Trip refreshed in main-component with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.trip = value;
       this.isInit = this.trip.isInit;
     });
@@ -36,7 +38,7 @@ export class MainPageComponent implements OnInit {
 
   onSubmitForCalculation(): void {
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", TripToJSON(this.trip), {headers: headers}).subscribe(data => {
+    this.http.post<TripService>(DataAccessService.BACKEND_URL + "/trip/calculation", TripToJSON(this.trip), {headers: headers}).subscribe(data => {
       console.log("Called for calculation. Got %o", data);
       this.dataStorageService.setTrip(data);
     })
@@ -86,7 +88,7 @@ export class MainPageComponent implements OnInit {
   }
 
   refresh(): void {
-    this.dataStorageService.retrieveTripFromServer(this.trip.uuid);
+    this.access.retrieveTripFromServer();
   }
 
   reset(): void{

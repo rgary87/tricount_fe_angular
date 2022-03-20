@@ -58,7 +58,7 @@ export class AddSpendingComponent implements OnInit {
     public dialog: MatDialog,
   ) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
-      console.log("Trip refreshed in add-spending  with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
+      // console.log("Trip refreshed in add-spending  with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.trip = value;
       this.spending_list = this.trip.spending_list.sort(((a, b) => a.payed_by.localeCompare(b.payed_by) ));
       this.participant_list = this.trip.participant_list;
@@ -98,14 +98,16 @@ export class AddSpendingComponent implements OnInit {
 
     let sharedToAll = group.get('All')?.value;
     if (sharedToAll) {
-
-    }
-    for (let p of this.participant_list) {
-      let shared = group.get(p.name);
-      if (sharedToAll || shared?.value) {
-        sharedWith.push(p.name);
+      sharedWith.push("all");
+      console.log("Participant ALL share this spending");
+    } else {
+      for (let p of this.participant_list) {
+        let shared = group.get(p.name);
+        if (sharedToAll || shared?.value) {
+          sharedWith.push(p.name);
+        }
+        console.log("Participant " + p.name + (shared?.value ? " do " : " doesn't ") + "share this spending");
       }
-      console.log("Participant " + p.name + (shared?.value ? " do " : " doesn't ") + "share this spending");
     }
     let maxIndex = 0;
     this.spending_list.forEach(s => {
@@ -216,10 +218,14 @@ export class DialogModifySpending {
     this.spending = data.spending;
     this.trip = data.trip;
     this.participantGroup = formBuilder.group({});
+    let sharedToAll = false;
+    if (this.spending.shared_with.length === 1 && this.spending.shared_with[0] === 'all') {
+      sharedToAll = true;
+    }
     this.trip.participant_list.forEach((p: PersonService) => {
-      this.participantGroup.addControl(p.name, new FormControl(this.spending.shared_with.indexOf(p.name) !== -1))
+      this.participantGroup.addControl(p.name, new FormControl(sharedToAll || this.spending.shared_with.indexOf(p.name) !== -1))
     });
-    this.participantGroup.addControl('All', new FormControl(this.spending.shared_with.length === this.trip.participant_list.length));
+    this.participantGroup.addControl('All', new FormControl(sharedToAll || this.spending.shared_with.length === this.trip.participant_list.length));
     this.modifiedAmountControl = new FormControl('', [Validators.required]);
     this.modifiedAmountControl.setValue(this.spending.amount);
     this.modifiedPayerControl = new FormControl('', [Validators.required]);
@@ -242,12 +248,17 @@ export class DialogModifySpending {
     this.spending.reason = this.modifiedReasonControl.value;
     this.spending.shared_with = [];
     let sharedToAll = this.participantGroup.get('All')?.value;
-    for (let p of this.trip.participant_list) {
-      let shared = this.participantGroup.get(p.name);
-      if (sharedToAll || shared?.value) {
-        this.spending.shared_with.push(p.name);
+    if (sharedToAll) {
+      this.spending.shared_with.push("all");
+      console.log("Participant ALL share this spending");
+    } else {
+      for (let p of this.trip.participant_list) {
+        let shared = this.participantGroup.get(p.name);
+        if (sharedToAll || shared?.value) {
+          this.spending.shared_with.push(p.name);
+        }
+        console.log("Participant " + p.name + (shared?.value ? " do " : " doesn't ") + "share this spending");
       }
-      console.log("Participant " + p.name + (shared?.value ? " do " : " doesn't ") + "share this spending");
     }
     this.dialogRef.close();
   }

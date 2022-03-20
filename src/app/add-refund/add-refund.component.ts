@@ -7,8 +7,8 @@ import {TripService} from "../services/trip.service";
 import {RefundService} from "../services/refund.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MainPageComponent} from "../main-page/main-page.component";
+import {DataAccessService} from "../services/data-access.service";
 
-const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
 
 @Component({
   selector: 'app-add-refund',
@@ -32,11 +32,12 @@ export class AddRefundComponent implements OnInit {
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
     private mainPage: MainPageComponent,
-    public dataStorageService: DataStorageService
+    public dataStorageService: DataStorageService,
+    public access: DataAccessService,
   ) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
       this.trip = value;
-      console.log("Trip refreshed in add-refund    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
+      // console.log("Trip refreshed in add-refund    with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.refreshRefunds();
     });
   }
@@ -61,10 +62,8 @@ export class AddRefundComponent implements OnInit {
     }
     this.refreshRefunds();
 
-    this.http.post<TripService>(DataStorageService.BACKEND_URL + "/trip/calculation", JSON.stringify(this.trip), {headers: headers}).subscribe(data => {
-      console.log("Called for calculation. Got %o", data);
-      this.dataStorageService.setTrip(data);
-    })
+
+    this.access.updateTripOnModify(this.trip);
   }
 
   ngOnInit(): void {
