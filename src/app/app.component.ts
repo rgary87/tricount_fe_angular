@@ -1,9 +1,7 @@
 import {Component, HostListener, Inject, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {TripService, TripToJSON} from "./services/trip.service";
 import {DataStorageService} from "./services/data-storage.service";
 import {MAT_DIALOG_DATA, MatDialog} from "@angular/material/dialog";
-import { fromEvent, Observable, Subscription } from "rxjs";
+import {DataAccessService} from "./services/data-access.service";
 
 @Component({
   selector: 'app-root',
@@ -13,6 +11,24 @@ import { fromEvent, Observable, Subscription } from "rxjs";
 export class AppComponent implements OnInit, OnChanges {
 
   mobile:boolean = false;
+
+  constructor(
+    private dataStorageService: DataStorageService,
+    public dialog: MatDialog) {
+  }
+
+  reset(): void{
+    this.dataStorageService.reset();
+    location.reload();
+  }
+
+  print_data(): void {
+    this.dataStorageService.print_data()
+  }
+
+  openShareDialog():void {
+    this.dialog.open(DialogSharePage, {data: DataAccessService.UUID});
+  }
 
   @HostListener('window:resize', ['$event'])
   onResize(event:any) {
@@ -31,6 +47,22 @@ export class AppComponent implements OnInit, OnChanges {
   ngOnChanges(changes:SimpleChanges) {
     console.log("change happened...");
   }
+}
 
+@Component({
+  selector: 'dialog-share-page',
+  templateUrl: './dialog-share-page.html'
+})
+export class DialogSharePage {
+  uuid: string;
+  url: string;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: string) {
+    this.uuid = data;
+    this.url = window.location.href;
+  }
+
+  copyLink(): void {
+    navigator.clipboard.writeText(this.url + this.uuid);
+  }
 
 }

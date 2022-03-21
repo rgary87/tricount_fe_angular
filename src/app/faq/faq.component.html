@@ -1,0 +1,49 @@
+<div class="main-content">
+  <div style="text-align: center">
+    <h1>F.A.Q</h1>
+  </div>
+  <mat-accordion multi>
+    <mat-expansion-panel [expanded]="panel === 'refund'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Why shouldn't I refund if some spendings haven't yet been added?</mat-panel-title>
+        <mat-panel-description>
+          Even if they do not concerns me?
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>
+        <b>Short Answer: Because of the way the distribution algorithm works.</b>
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+      </p>
+      <p>
+        Long Answer: When the distribution is done, some sorting and ordering happens in the list of participants and spendings. But, as you can
+        expect, creating a refund with change these sorting and ordering. After all, a refund is nothing more than a spending from one participant
+        concerning only one other participant.
+      </p>
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <p>
+        <i>But wait!</i> We missed a spending, created it late, after some refund started, does that mean we should return the money and start again?!<br>
+        Don't worry! The system is designed for this kind of event. In this case, the distribution will transform any refunds marked as done in a
+        spending and will take it into account during the distribution process.<br>
+        Some participant may need to refund again another amount, some may see their, previously needed, refund disappear. It all depends on who did
+        what and for how much.
+      </p>
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <p>That warning is for your convenience only. Don't worry, in the end everyone still owes the same.</p>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="panel === 'other'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>This is another faq section</mat-panel-title>
+        <mat-panel-description>
+          Another? Are you certain sir?
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>OF COURSE I AM, YOU MONKEY ASS BREATH!</p>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

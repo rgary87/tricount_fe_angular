@@ -7,7 +7,14 @@
 <!-- * * * * * * * to get started with your project! * * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
-
+<mat-toolbar>
+  <mat-icon style="margin-right: 10px;">account_balance_wallet</mat-icon>
+  <span>Sharing Trips</span>
+  <div class="spacer"></div>
+  <button class="mat-primary" mat-raised-button (click)="openShareDialog()" style="margin-right: 10px">Share</button>
+  <button class="mat-primary" mat-raised-button (click)="print_data()" style="margin-right: 10px" *ngIf="!mobile">Print Data</button>
+  <button class="mat-primary" mat-raised-button (click)="reset()" style="margin-right: 10px">Reset Data</button>
+</mat-toolbar>
 <router-outlet></router-outlet>
 
 

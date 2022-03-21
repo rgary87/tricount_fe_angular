@@ -52,6 +52,10 @@ table {
   background-color: white;
 }
 
+.main-content {
+  margin: 15px;
+}
+
 @media (min-width: 900px) {
   .flex-container {
     display: flex;
@@ -73,4 +77,9 @@ th.mat-header-cell {
 
 td.mat-cell {
   padding: 0 3px 0 3px !important;
+}
+
+.warning-text {
+  font-size: 8pt;
+  color: #f44336;
 }

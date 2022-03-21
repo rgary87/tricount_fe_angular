@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {HttpClientModule} from "@angular/common/http";
-import {AppComponent} from './app.component';
+import {AppComponent, DialogSharePage} from './app.component';
 import {AddPersonComponent, DialogModifyPerson} from './add-person/add-person.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { CreateTripComponent } from './create-trip/create-trip.component';
@@ -23,8 +23,11 @@ import {MatSortModule} from "@angular/material/sort";
 import {EuroPipe} from "./pipe/EuroPipe";
 import {RouterModule, Routes} from "@angular/router";
 import { UuidComponent } from './uuid/uuid.component';
-import {MainPageComponent, DialogSharePage} from './main-page/main-page.component';
+import {MainPageComponent} from './main-page/main-page.component';
 import {MatIconModule} from "@angular/material/icon";
+import { FaqComponent } from './faq/faq.component';
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -40,6 +43,7 @@ import {MatIconModule} from "@angular/material/icon";
     DialogSharePage,
     EuroPipe,
     MainPageComponent,
+    FaqComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,20 +63,18 @@ import {MatIconModule} from "@angular/material/icon";
     MatDialogModule,
     MatSortModule,
     RouterModule.forRoot([
+        {path: 'faq', component: FaqComponent},
         {path: ':uuid', component: UuidComponent},
-        // { path: ':uuid', component: UuidComponent, redirectTo: '' },
         {path: '', component: MainPageComponent, pathMatch: 'full'},
       ]
       // , {enableTracing: true}
     ),
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule,
+    MatDividerModule
   ],
   exports: [RouterModule],
   providers: [AppComponent, AddRefundComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
-
-export const MyRoutes: Routes = [
-  {  }
-]

@@ -1,5 +1,7 @@
 <h4>Refund</h4>
 
+<span class="warning-text">Please ensure that every spendings has been reported before starting refunding. <a routerLink="faq" [queryParams]="{'panel':'refund'}" target="_blank">Why is that?</a></span>
+
 <p>Do you, <b>{{refund.from}}</b>, really want to refund <b><i>{{refund.amount | euro : true  }}</i></b> to <b>{{refund.to}}</b> ? </p>
 
 <mat-dialog-actions align="end">

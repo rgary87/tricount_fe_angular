@@ -130,5 +130,9 @@ export class DataStorageService implements OnInit {
     this.tripBehaviorSubject.next(this.trip);
   }
 
+  print_data(): void {
+    this.refresh();
+    console.log("Data: %o", this.trip);
+  }
 
 }

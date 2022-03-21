@@ -3,8 +3,8 @@ import {TripService, TripToJSON} from "../services/trip.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DataStorageService} from "../services/data-storage.service";
 import {MAT_DIALOG_DATA, MatDialog} from "@angular/material/dialog";
-import {AppComponent} from "../app.component";
 import {DataAccessService} from "../services/data-access.service";
+import {AppComponent} from "../app.component";
 
 @Component({
   selector: 'app-main-page',
@@ -19,10 +19,9 @@ export class MainPageComponent implements OnInit {
   display_base_page = true;
 
   constructor(private http: HttpClient,
-              private dataStorageService: DataStorageService,
-              private access: DataAccessService,
               public app: AppComponent,
-              public dialog: MatDialog) {
+              private dataStorageService: DataStorageService,
+              private access: DataAccessService) {
     this.dataStorageService.tripBehaviorSubject.subscribe( value => {
       console.log("Trip refreshed in main-component with %o spendings, %o participants, %o refunds, %o refunds on participants", value.number_of_spendings, value.number_of_participants, value.number_of_refunds, value.number_of_refunds_on_participants);
       this.trip = value;
@@ -85,35 +84,5 @@ export class MainPageComponent implements OnInit {
     this.access.retrieveTripFromServer();
   }
 
-  reset(): void{
-    this.dataStorageService.reset();
-    location.reload();
-  }
-
-  print_data(): void {
-    this.dataStorageService.refresh();
-    console.log("Data: %o", this.trip);
-  }
-
-  openShareDialog():void {
-    this.dialog.open(DialogSharePage, {data: this.trip.uuid});
-  }
 }
 
-@Component({
-  selector: 'dialog-share-page',
-  templateUrl: './dialog-share-page.html'
-})
-export class DialogSharePage {
-  uuid: string;
-  url: string;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: string) {
-    this.uuid = data;
-    this.url = window.location.href;
-  }
-
-  copyLink(): void {
-    navigator.clipboard.writeText(this.url + this.uuid);
-  }
-
-}
