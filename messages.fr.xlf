@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="4677405205295411165" datatype="html">
+        <source>Participants list</source>
+        <target>Liste des participants</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8953033926734869941" datatype="html">
+        <source>Name</source>
+        <target>Nom</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5853061505345329195" datatype="html">
+        <source>
+          <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Total<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/>
+        </source>
+        <target>
+          <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Total<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/>
+        </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1166096322432984264" datatype="html">
+        <source>Stayed</source>
+        <target>Present</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6581893614106600342" datatype="html">
+        <source>Owe</source>
+        <target>Doit</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2742898151424611004" datatype="html">
+        <source>Payed</source>
+        <target>A payé</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5901651232151264423" datatype="html">
+        <source>Spent</source>
+        <target>A dépensé</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2350687709484433717" datatype="html">
+        <source>Refunds</source>
+        <target>Remboursements</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6533918067030990396" datatype="html">
+        <source>Amount</source>
+        <target>Montant</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1640609344969975994" datatype="html">
+        <source>To</source>
+        <target>À</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4335342517125421963" datatype="html">
+        <source>All clear, wait for refunds ...</source>
+        <target>Rien à faire, en attente de remboursement ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8726598752414986001" datatype="html">
+        <source>Add a participant</source>
+        <target>Ajouter un participant</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4224032360352185037" datatype="html">
+        <source>How long was this participant present</source>
+        <target>Etait present pendant</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="255778996431705137" datatype="html">
+        <source>Add a participant !</source>
+        <target>Ajouter un participant !</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-person/add-person.component.html</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1556655609322135216" datatype="html">
+        <source>Update a spending</source>
+        <target>Mettre a jour une dépense</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1477224658328401482" datatype="html">
+        <source>Who paid for this?</source>
+        <target>Qui à payer ?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4775550080689015987" datatype="html">
+        <source>Reason</source>
+        <target>Pour quoi</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3772517412533252727" datatype="html">
+        <source>All Participants</source>
+        <target>Tout les participants</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7022070615528435141" datatype="html">
+        <source>Delete</source>
+        <target>Supprime</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2159130950882492111" datatype="html">
+        <source>Cancel</source>
+        <target>Annule</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4021752662928002901" datatype="html">
+        <source>Update</source>
+        <target>Met à jour</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/add-spending/dialog-modify-spending.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7436069323727527282" datatype="html">
+        <source>Sharing Trips</source>
+        <target>Partageons !</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/main-page/main-page.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7419704019640008953" datatype="html">
+        <source>Share</source>
+        <target>Partage</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/main-page/main-page.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4756467954016756674" datatype="html">
+        <source>Print Data</source>
+        <target>Print Data</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/main-page/main-page.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8170283810368466188" datatype="html">
+        <source>Reset Data</source>
+        <target>Efface Tout</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/main-page/main-page.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3903590839137476289" datatype="html">
+        <source>Synchronize<x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>
+        </source>
+        <target>Synchronise<x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>
+        </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/main-page/main-page.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

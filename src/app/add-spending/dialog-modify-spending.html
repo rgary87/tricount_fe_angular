@@ -1,13 +1,13 @@
 <!--<div class="content" role="main" style="width: calc((100%/2) - (100%/10)); float: left">-->
-<h4>Update a spending</h4>
+<h4 i18n>Update a spending</h4>
 
 <mat-form-field appearance="fill">
-<mat-label>Amount</mat-label>
+<mat-label i18n>Amount</mat-label>
 <input matInput type="number" [formControl]="modifiedAmountControl">
 </mat-form-field>
 
 <mat-form-field appearance="fill">
-  <mat-label>Who paid for this?</mat-label>
+  <mat-label i18n>Who paid for this?</mat-label>
   <mat-select [formControl]="modifiedPayerControl" >
     <mat-option *ngFor="let formOption of this.participantSelectOptions" [value]="formOption.value">{{formOption.viewValue}}</mat-option>
   </mat-select>
@@ -15,23 +15,21 @@
 
 <div>
   <mat-form-field appearance="fill">
-    <mat-label>Reason</mat-label>
+    <mat-label i18n>Reason</mat-label>
     <input matInput id="reason" type="text" [formControl]="modifiedReasonControl">
   </mat-form-field>
 </div>
 
 <section [formGroup]="participantGroup">
-  <mat-checkbox formControlName="All"> All Participants </mat-checkbox>
+  <mat-checkbox i18n formControlName="All"> All Participants </mat-checkbox>
   <span *ngIf="!this.participantGroup.get('All')?.value">
         <p *ngFor="let p of trip.participant_list"><mat-checkbox formControlName="{{p.name}}"> {{p.name}} </mat-checkbox></p>
       </span>
 </section>
 
 
-
-
 <mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close="false" class="mat-warn" (click)="deleteSpending()">Delete</button>
-  <button mat-raised-button mat-dialog-close="false">Cancel</button>
-  <button mat-raised-button class="mat-accent" mat-dialog-close="true" (click)="updateSpending()">Update</button>
+  <button i18n mat-raised-button mat-dialog-close="false" class="mat-warn" (click)="deleteSpending()">Delete</button>
+  <button i18n mat-raised-button mat-dialog-close="false">Cancel</button>
+  <button i18n mat-raised-button class="mat-accent" mat-dialog-close="true" (click)="updateSpending()">Update</button>
 </mat-dialog-actions>

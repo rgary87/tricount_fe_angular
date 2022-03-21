@@ -8,6 +8,14 @@
       "schematics": {
         "@schematics/angular:application": {
           "strict": true
+        },
+        "i18n": {
+          "sourceLocale": "en-US",
+          "locales": {
+            "fr": {
+              "translation": "messages.fr.xlf"
+            }
+          }
         }
       },
       "root": "",
@@ -22,6 +30,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
+            "localize": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
