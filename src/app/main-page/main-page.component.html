@@ -19,13 +19,13 @@
     </button>
 </div>
 
-<!--<p *ngIf="isInit">Init</p>-->
-<!--<p *ngIf="isInit">Trip time: {{ this.trip.default_number_of_days }} days</p>-->
+<!--<p >trip.isInit: {{trip.isInit}}</p>-->
+<!--<p *ngIf="trip.isInit">Trip time: {{ this.trip.default_number_of_days }} days</p>-->
 
-<app-create-trip *ngIf="!isInit"></app-create-trip>
+<app-create-trip *ngIf="!trip.isInit"></app-create-trip>
 <div class="flex-container">
-  <app-add-person *ngIf="isInit" style="width: 100%"></app-add-person>
-  <app-add-spending *ngIf="isInit" style="width: 100%"></app-add-spending>
+  <app-add-person *ngIf="trip.isInit" style="width: 100%"></app-add-person>
+  <app-add-spending *ngIf="trip.isInit" style="width: 100%"></app-add-spending>
 </div>
 
 <div style="width: 50%; margin-left: 50px;">
@@ -44,7 +44,7 @@
 </div>
 
 <div>
-  <app-add-refund *ngIf="isInit"></app-add-refund>
+  <app-add-refund *ngIf="trip.isInit"></app-add-refund>
 </div>
 
 <div class="footer">

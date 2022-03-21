@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {AppComponent} from "../app.component";
+import {FormBuilder} from "@angular/forms";
 import {DataStorageService} from "../services/data-storage.service";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {TripService} from "../services/trip.service";
 import {RefundService} from "../services/refund.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -28,7 +27,6 @@ export class AddRefundComponent implements OnInit {
   }
 
   constructor(
-    private http: HttpClient,
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
     private mainPage: MainPageComponent,
@@ -98,7 +96,6 @@ export class DialogModifyRefund {
 
   constructor(
     public dialogRef: MatDialogRef<DialogModifyRefund>,
-    public dataStorageService: DataStorageService,
     public formBuilder : FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: RefundDialogData,
   ) {

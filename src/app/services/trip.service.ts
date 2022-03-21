@@ -37,7 +37,7 @@ export class TripService {
 export function TripToJSON(trip: TripService):string {
   Object.defineProperty(trip, '_total_amount', {enumerable: false});
   Object.defineProperty(trip, '_id', {enumerable: false});
-  console.log("%o", trip);
-  console.log(JSON.stringify(trip));
+  // console.log("%o", trip);
+  // console.log(JSON.stringify(trip));
   return JSON.stringify(trip);
 }

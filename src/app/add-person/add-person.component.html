@@ -22,7 +22,7 @@
         <ng-container matColumnDef="payed">
           <th mat-header-cell *matHeaderCellDef>Payed</th>
           <td mat-cell *matCellDef="let participant" (click)="openParticipantModifDialog(participant.name)">{{participant.payed_amount | euro}}</td>
-          <td mat-footer-cell *matFooterCellDef> <b>{{this.getTotalCost()}} €</b> </td>
+          <td mat-footer-cell *matFooterCellDef> <b>{{this.getTotalCost() | euro: true}} </b> </td>
         </ng-container>
         <ng-container matColumnDef="spent">
           <th mat-header-cell [hidden]="mainPage.app.mobile" *matHeaderCellDef>Spent</th>

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {LocalStorageService} from "./local-storage.service";
 import {PersonService} from "./person.service";
 import {TripService} from "./trip.service";
@@ -10,22 +10,26 @@ import {DataAccessService} from "./data-access.service";
 @Injectable({
   providedIn: 'root'
 })
-export class DataStorageService {
+export class DataStorageService implements OnInit {
 
   private participant_list_key: string = "PARTICIPANT_LIST";
   private trip_info_key: string = "TRIP_INFO";
   private updated: boolean = true;
 
   public tripBehaviorSubject: BehaviorSubject<TripService> = new BehaviorSubject<TripService>(new TripService());
+
+  // @ts-ignore
   private trip: TripService;
 
   constructor(private localStorage: LocalStorageService,
               private access: DataAccessService) {
+    this.getTrip();
+    console.log('Storage Built');
+    this.access.dataObservable?.subscribe(value => this.setTrip(value));
+  }
 
-    this.trip = new TripService();
-    this.tripBehaviorSubject.next(this.getTrip());
+  ngOnInit(): void {
 
-    this.access.dataObservable.subscribe(value => this.setTrip(value));
   }
 
   getParticipantList(): PersonService[] {
@@ -36,18 +40,22 @@ export class DataStorageService {
     return [];
   }
 
-  private getTrip(): TripService {
+  private getTrip(): void {
+    console.log('In getTrip');
     if (!this.updated) {
-      return this.trip;
+      console.log('Not updated');
+      return;
     }
     this.updated = false;
     let string_trip = this.localStorage.get(this.trip_info_key);
     if (string_trip) {
-      this.trip = JSON.parse(string_trip);
-      return this.trip;
+      let trip = JSON.parse(string_trip);
+      DataAccessService.UUID = trip.uuid;
+      this.access.retrieveTripFromServer();
+      console.log('Got trip from storage with uuid: %o', trip.uuid);
+      return;
     }
-    this.access.createTrip(this.trip);
-    return this.trip;
+    return;
   }
 
   setParticipantList(list: PersonService[]): void {
@@ -55,7 +63,11 @@ export class DataStorageService {
     this.updated = true;
   }
 
-  setTrip(trip: TripService): void {
+  private setTrip(trip: TripService): void {
+    // console.trace();
+    console.log('In Set Trip')
+    if (!trip.isInit) return;
+    console.log('Save trip uuid: %o', trip.uuid);
     trip.refund_list = [];
     trip.number_of_spendings = trip.spending_list.length;
     trip.number_of_participants = trip.participant_list.length;
@@ -69,56 +81,46 @@ export class DataStorageService {
     trip.number_of_refunds_on_participants = number_of_refunds_on_participants;
 
     this.localStorage.set(this.trip_info_key, JSON.stringify(trip));
+    this.trip = trip;
     this.tripBehaviorSubject.next(trip);
     this.updated = true;
   }
 
   addParticipant(person: PersonService): void {
-    let trip = this.getTrip();
-    trip.participant_list.push(person);
-    this.setTrip(trip);
+    this.trip.participant_list.push(person);
+    this.access.updateTripOnModify(this.trip);
   }
 
   addSpending(spending: SpendingService): void {
-    let trip = this.getTrip();
     console.log("Store spending");
-    trip.spending_list.push(spending);
-    this.setTrip(trip);
+    this.trip.spending_list.push(spending);
+    this.access.updateTripOnModify(this.trip);
   }
 
   addRefund(refund: RefundService): void {
-    let trip = this.getTrip();
     console.log("Store refund");
-    trip.refund_list.push(refund);
-    this.setTrip(trip);
+    this.trip.refund_list.push(refund);
+    this.access.updateTripOnModify(this.trip);
   }
 
   removeParticipant(name: string): void {
-    let trip = this.getTrip();
     console.log("Remove participant %o", name);
-    let filtered = trip.participant_list.filter(function (v, i, a) {
+    let filtered = this.trip.participant_list.filter(function (v, i, a) {
       return v.name !== name;
     });
-    trip.participant_list = filtered;
-    this.setTrip(trip);
+    this.trip.participant_list = filtered;
+    this.access.updateTripOnModify(this.trip);
   }
 
   removeSpending(idx: number): void {
-    let trip = this.getTrip();
     console.log("Remove spending %o", idx);
-    trip.spending_list = trip.spending_list.filter(s => s.idx !== idx);
-    this.setTrip(trip);
-  }
-
-  setDefaultDayCount(days: number): void {
-    let trip = this.getTrip();
-    trip.isInit = true;
-    trip.default_number_of_days = days;
-    this.setTrip(trip);
+    this.trip.spending_list = this.trip.spending_list.filter(s => s.idx !== idx);
+    this.access.updateTripOnModify(this.trip);
   }
 
   reset():void {
     this.updated = true;
+    this.localStorage.remove(this.trip_info_key);
     this.access.createTrip(new TripService());
   }
 
