@@ -20,11 +20,7 @@ export class DataAccessService implements OnDestroy {
 
 
   constructor(private http: HttpClient) {
-    if (window.location.href.indexOf("localhost") === -1 && window.location.href.indexOf("127.0.0.1") === -1) {
-      DataAccessService.BACKEND_URL = 'http://serversuccu.serveftp.com:3000';
-    } else {
-      DataAccessService.BACKEND_URL = 'http://127.0.0.1:3000';
-    }
+    DataAccessService.BACKEND_URL = window.location.protocol + '//' + window.location.hostname;
     const source = interval(20000);
     this.subs = source.subscribe(n => this.retrieveTripFromServer());
   }
