@@ -20,7 +20,7 @@ export class DataAccessService implements OnDestroy {
 
 
   constructor(private http: HttpClient) {
-    DataAccessService.BACKEND_URL = window.location.protocol + '//' + window.location.hostname;
+    DataAccessService.BACKEND_URL = window.location.protocol + '//' + window.location.hostname + ':3000';
     const source = interval(20000);
     this.subs = source.subscribe(n => this.retrieveTripFromServer());
   }
